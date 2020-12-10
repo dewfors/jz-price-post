@@ -153,31 +153,95 @@ function readFileXLSX(path) {
         // чтение из файла
         // let goods = require('./src/dataSemenaChia/LinksSemenaChia');
 
-        resolve();
+        resolve('file read')
 
-      });
+      })
+      .catch(e => {
+        reject('file read err')
+      })
 
   });
 }
 
-async function writeFileXLSX(path) {
+
+let outputFile = './src/data/' + 'file.xlsx';
+
+function createFileXLSX(path) {
 
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      console.log(`номер реально выполнился`);
-      resolve();
-    }, 5000);
+
+    // Load a new blank workbook
+    XlsxPopulate.fromBlankAsync()
+      .then(workbook => {
+
+        namePost = 'Какойто поставщик'
+
+        // row 2 - cell B - Наименование поставщика
+        workbook.sheet("Sheet1").cell(`B2`).value(`Наименование поставщика`);
+        workbook.sheet("Sheet1").cell(`C2`).value(`${namePost}`);
+
+        // row 3 - cell B - Дата прайса
+        workbook.sheet("Sheet1").cell(`B3`).value(`Дата прайса`);
+        workbook.sheet("Sheet1").cell(`C3`).value(`01-01-2020`);
+
+        // Write to file.
+        workbook.toFileAsync(path)
+
+      })
+      .then(()=>{
+        resolve('file write')
+      })
+      .catch(e => {
+        reject('file write err')
+      })
+
   });
+
+
 }
 
-(async () => {
 
-  let inputFile = './src/postPrices/amrita.xlsx';
+readFileXLSX(outputFile)
+  .then((res) => {
+    console.log(res);
+  })
+  .then((res)=>{
+    console.log(res);
+    createFileXLSX(outputFile)
+  })
+  .then(finalResult => {
+    console.log(`Итоговый результат: ${finalResult}`);
+  })
+  .catch(e => {
+    console.log(e);
+  })
+  .finally(() => {
+    console.log(`finally`);
+  });
 
-  await readFileXLSX(inputFile)
-  await writeFileXLSX(inputFile)
 
-  console.log('end');
+//
+// (async () => {
+//
+//   let inputFile = './src/postPrices/amrita.xlsx';
+//
+//   readFileXLSX(inputFile)
+//     .then()
+//   await writeFileXLSX(inputFile)
+//
+//   console.log('end');
+//
+// })();
 
-})();
-
+//
+// (async () => {
+//
+//   let inputFile = './src/postPrices/amrita.xlsx';
+//
+//   await readFileXLSX(inputFile)
+//   await writeFileXLSX(inputFile)
+//
+//   console.log('end');
+//
+// })();
+//
