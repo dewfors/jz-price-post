@@ -8,83 +8,12 @@ const fs = require("fs");
 const goods = [];
 
 
-// `A${colomnNumber}`
 let now = new Date().toLocaleTimeString();
 console.log(now);
 
-// XlsxPopulate.fromFileAsync("./src/postPrices/amrita.xlsx")
-//   .then(workbook => {
-//     // Modify the workbook.
-//     // const value = workbook.sheet("Аюрведа косметика").cell("A5").value();
-//
-//     // now = new Date().toLocaleTimeString();
-//     // console.log(now);
-//
-//     // const sheet = workbook.sheet("Аюрведа косметика");
-//     const sheet = workbook.sheet(0);
-//     let group0 = '';
-//     let group = '';
-//     let artikulPost ='';
-//     let name ='';
-//     let priceOpt ='';
-//     let priceRozn ='';
-//     let count ='';
-//
-//     for (let i = 8; i < 300; i++) {
-//
-//       group = sheet.cell(`B${i}`).value();
-//       artikulPost = sheet.cell(`A${i}`).value();
-//       name = sheet.cell(`B${i}`).value();
-//       priceOpt = sheet.cell(`G${i}`).value();
-//       priceRozn = sheet.cell(`Q${i}`).value();
-//       count = sheet.cell(`R${i}`).value();
-//
-//       // шапка таблицы
-//       if (artikulPost === 'Артикул' && group === 'Наименование товара'){
-//         continue;
-//       }
-//
-//       // строка с названием группы
-//       if (artikulPost === undefined && group !== ''){
-//         group0 = group;
-//         continue;
-//       }
-//
-//       // строка пустым артикулом и названием группы
-//       if (artikulPost === undefined && group === undefined){
-//         break;
-//       }
-//
-//       goods.push({
-//         group: group0,
-//         artikulPost: artikulPost,
-//         name: name,
-//         priceOpt: priceOpt,
-//         priceRozn: priceRozn,
-//         count: count,
-//       })
-//
-//     }
-//
-//     now = new Date().toLocaleTimeString();
-//     console.log(now);
-//
-//     console.log(goods);
-//     const json1 = JSON.stringify(goods)
-//
-//     // запись в файл
-//     // fs.writeFileSync("goods.txt", json1,  "ascii")
-//     fs.writeFileSync("goods.txt", json1,  "utf8")
-//
-//     // чтение из файла
-//     // let goods = require('./src/dataSemenaChia/LinksSemenaChia');
-//
-//
-//   });
-
 const amritaInputFile = "./src/postPrices/amrita.xlsx";
-const amritaOutputFile = './src/data/' + 'file.xlsx';
-const amritaGoodsFile = './src/data/' + 'goods.txt';
+const amritaOutputFile = './src/data/' + 'amrita-jz.xlsx';
+const amritaGoodsFile = './src/data/' + 'amrita-goods.txt';
 const headers = [
   {cell: 'A', id: 'nom', title: 'Номер'},
   {cell: 'B', id: 'artikulPost', title: 'Артикул поставщика'},
@@ -96,198 +25,87 @@ const headers = [
 ]
 
 
-function readFileXLSX(path) {
+// function readFileXLSX(path) {
+//
+// }
+//
+// function createFileXLSX(path) {
+//
+// }
 
+function readFileXLSX() {
   return new Promise((resolve, reject) => {
-    XlsxPopulate.fromFileAsync(amritaInputFile)
-      .then(workbook => {
-        // Modify the workbook.
-        // const value = workbook.sheet("Аюрведа косметика").cell("A5").value();
-
-        // now = new Date().toLocaleTimeString();
-        // console.log(now);
-
-        // const sheet = workbook.sheet("Аюрведа косметика");
-        const sheet = workbook.sheet(0);
-        let group0 = '';
-        let group = '';
-        let artikulPost = '';
-        let name = '';
-        let priceOpt = '';
-        let priceRozn = '';
-        let count = '';
-
-        for (let i = 8; i < 500; i++) {
-
-          group = sheet.cell(`B${i}`).value();
-          artikulPost = sheet.cell(`A${i}`).value();
-          name = sheet.cell(`B${i}`).value();
-          priceOpt = sheet.cell(`G${i}`).value();
-          priceRozn = sheet.cell(`Q${i}`).value();
-          count = sheet.cell(`R${i}`).value();
-
-          // шапка таблицы
-          if (artikulPost === 'Артикул' && group === 'Наименование товара') {
-            continue;
-          }
-
-          // строка с названием группы
-          if (artikulPost === undefined && group !== '') {
-            group0 = group;
-            continue;
-          }
-
-          // строка пустым артикулом и названием группы
-          if (artikulPost === undefined && group === undefined) {
-            break;
-          }
-
-          goods.push({
-            group: group0,
-            artikulPost: artikulPost,
-            name: name,
-            priceOpt: priceOpt,
-            priceRozn: priceRozn,
-            count: count,
-          })
-
-        }
-
-        // console.log(goods);
-        const json1 = JSON.stringify(goods)
-
-        // запись в файл
-        // fs.writeFileSync("goods.txt", json1,  "ascii")
-        fs.writeFileSync("goods.txt", json1, "utf8")
-
-        // чтение из файла
-        // let goods = require('./src/dataSemenaChia/LinksSemenaChia');
-
-        resolve('file read')
-
-      })
-      .catch(e => {
-        reject('file read err')
-      })
-
-  });
-}
-
-
-function createFileXLSX(path) {
-
-  return new Promise((resolve, reject) => {
-
-    // Load a new blank workbook
-    XlsxPopulate.fromBlankAsync()
-      .then(workbook => {
-
-        namePost = 'Какойто поставщик'
-
-        // row 2 - cell B - Наименование поставщика
-        workbook.sheet("Sheet1").cell(`B2`).value(`Наименование поставщика`);
-        workbook.sheet("Sheet1").cell(`C2`).value(`${namePost}`);
-
-        // row 3 - cell B - Дата прайса
-        workbook.sheet("Sheet1").cell(`B3`).value(`Дата прайса`);
-        workbook.sheet("Sheet1").cell(`C3`).value(`01-01-2020`);
-
-        // Write to file.
-        workbook.toFileAsync(amritaOutputFile)
-
-      })
-      .then(()=>{
-        resolve('file write')
-      })
-      .catch(e => {
-        reject('file write err')
-      })
-
-  });
-
-
-}
-
-function doSomething1() {
-  return new Promise((resolve, reject) => {
-
-
-
 
     console.log("1. чтение файла");
-    // // Успех в половине случаев.
-    // if (Math.random() > .5) {
-    //   resolve("1-Успех")
-    // } else {
-    //   reject("1-Ошибка")
-    // }
 
     XlsxPopulate.fromFileAsync(amritaInputFile)
       .then(workbook => {
         // Modify the workbook.
+        // sample
         // const value = workbook.sheet("Аюрведа косметика").cell("A5").value();
 
-        // now = new Date().toLocaleTimeString();
-        // console.log(now);
-
         // const sheet = workbook.sheet("Аюрведа косметика");
-        const sheet = workbook.sheet(0);
-        let group0 = '';
-        let group = '';
-        let artikulPost = '';
-        let name = '';
-        let priceOpt = '';
-        let priceRozn = '';
-        let count = '';
 
-        for (let i = 8; i < 10000; i++) {
+        // цикл по закладкам в эксель
+        for (let k = 0; k < 3; k++) {
+          let countGoodsFromSheet=0;
+          const sheet = workbook.sheet(k);
+          let group0 = '';
+          let group = '';
+          let artikulPost = '';
+          let name = '';
+          let priceOpt = '';
+          let priceRozn = '';
+          let count = '';
 
-          group = sheet.cell(`B${i}`).value();
-          artikulPost = sheet.cell(`A${i}`).value();
-          name = sheet.cell(`B${i}`).value();
-          priceOpt = sheet.cell(`G${i}`).value();
-          priceRozn = sheet.cell(`Q${i}`).value();
-          count = sheet.cell(`R${i}`).value();
+          for (let i = 8; i < 10000; i++) {
 
-          // шапка таблицы
-          if (artikulPost === 'Артикул' && group === 'Наименование товара') {
-            continue;
+            group = sheet.cell(`B${i}`).value();
+            artikulPost = sheet.cell(`A${i}`).value();
+            name = sheet.cell(`B${i}`).value();
+            priceOpt = sheet.cell(`G${i}`).value();
+            priceRozn = sheet.cell(`Q${i}`).value();
+            count = sheet.cell(`R${i}`).value();
+
+            // шапка таблицы
+            if (artikulPost === 'Артикул' && group === 'Наименование товара') {
+              continue;
+            }
+
+            // строка с названием группы
+            if (artikulPost === undefined && group !== '') {
+              group0 = group;
+              continue;
+            }
+
+            // строка пустым артикулом и названием группы
+            if (artikulPost === undefined && group === undefined) {
+              break;
+            }
+            countGoodsFromSheet++
+
+            goods.push({
+              group: group0,
+              artikulPost: artikulPost,
+              name: name,
+              priceOpt: priceOpt,
+              priceRozn: priceRozn,
+              count: count,
+            })
+
           }
-
-          // строка с названием группы
-          if (artikulPost === undefined && group !== '') {
-            group0 = group;
-            continue;
-          }
-
-          // строка пустым артикулом и названием группы
-          if (artikulPost === undefined && group === undefined) {
-            break;
-          }
-
-          goods.push({
-            group: group0,
-            artikulPost: artikulPost,
-            name: name,
-            priceOpt: priceOpt,
-            priceRozn: priceRozn,
-            count: count,
-          })
-
+          console.log(`На закладке ${k} выбрано ${countGoodsFromSheet} товаров`);
         }
-
-        // console.log(goods);
+        console.log(goods.length);
         const jsonGoods = JSON.stringify(goods)
 
         // запись в файл
         // fs.writeFileSync("goods.txt", json1,  "ascii")
         fs.writeFileSync(amritaGoodsFile, jsonGoods, "utf8")
 
-        // чтение из файла
+
+        // пример чтение из файла
         // let goods = require('./src/dataSemenaChia/LinksSemenaChia');
-
-        //resolve('file read')
-
       })
       .then(()=>{
         resolve(`1- Успешно прочитан файл: ${amritaInputFile}`)
@@ -301,7 +119,7 @@ function doSomething1() {
   })
 }
 
-function doSomething2() {
+function createFileXLSX() {
   return new Promise((resolve, reject) => {
     console.log("2. Запись файла");
     //let outputFile = './src/data/' + 'file.xlsx';
@@ -361,18 +179,19 @@ function doSomething2() {
 function doSomething3() {
   return new Promise((resolve, reject) => {
     console.log("3.");
-    // Успех в половине случаев.
-    if (Math.random() > .5) {
-      resolve("3-Успех")
-    } else {
-      reject("3-Ошибка")
-    }
+    resolve("3-Успех")
+    // // Успех в половине случаев.
+    // if (Math.random() > .5) {
+    //   resolve("3-Успех")
+    // } else {
+    //   reject("3-Ошибка")
+    // }
   })
 }
 
 
-doSomething1()
-  .then(result => doSomething2())
+readFileXLSX()
+  .then(result => createFileXLSX())
   .then(newResult => doSomething3())
   .then(finalResult => {
     console.log(`Итоговый результат: ${finalResult}`);
