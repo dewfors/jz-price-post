@@ -12,7 +12,8 @@ let now = new Date().toLocaleTimeString();
 console.log(now);
 
 const amritaInputFile = "./src/postPrices/amrita.xlsx";
-const amritaOutputFile = './src/data/' + 'amrita-jz.xlsx';
+const amritaOutputFileDiscountOff = './src/data/' + 'amrita-jz-discountOff.xlsx';
+const amritaOutputFileDiscountOn = './src/data/' + 'amrita-jz-discountOn.xlsx';
 const amritaGoodsFile = './src/data/' + 'amrita-goods.txt';
 const headers = [
   {cell: 'A', id: 'nom', title: 'Номер'},
@@ -36,6 +37,8 @@ const headers = [
 function readFileXLSX() {
   return new Promise((resolve, reject) => {
 
+
+
     console.log("1. чтение файла");
 
     XlsxPopulate.fromFileAsync(amritaInputFile)
@@ -54,6 +57,7 @@ function readFileXLSX() {
           let group = '';
           let artikulPost = '';
           let name = '';
+          let upakovka = '';
           let priceOpt = '';
           let priceRozn = '';
           let count = '';
@@ -63,9 +67,17 @@ function readFileXLSX() {
             group = sheet.cell(`B${i}`).value();
             artikulPost = sheet.cell(`A${i}`).value();
             name = sheet.cell(`B${i}`).value();
+
             priceOpt = sheet.cell(`G${i}`).value();
             priceRozn = sheet.cell(`Q${i}`).value();
-            count = sheet.cell(`R${i}`).value();
+            // count = sheet.cell(`R${i}`).value();
+            count = 100;
+
+            upakovka = sheet.cell(`D${i}`).value();
+            if (upakovka === undefined) upakovka = ``;
+
+
+
 
             // шапка таблицы
             if (artikulPost === 'Артикул' && group === 'Наименование товара') {
@@ -85,6 +97,7 @@ function readFileXLSX() {
             countGoodsFromSheet++
 
             goods.push({
+              upakovka: upakovka,
               group: group0,
               artikulPost: artikulPost,
               name: name,
@@ -111,7 +124,8 @@ function readFileXLSX() {
         resolve(`1- Успешно прочитан файл: ${amritaInputFile}`)
       })
       .catch(e => {
-        reject(`1- Ошибка чтения файла: ${amritaInputFile}`)
+        // console.log(e);
+        reject(`1- Ошибка чтения файла: ${amritaInputFile} - ${e}`)
       })
 
 
@@ -119,7 +133,7 @@ function readFileXLSX() {
   })
 }
 
-function createFileXLSX() {
+function createFileXLSX(discount) {
   return new Promise((resolve, reject) => {
     console.log("2. Запись файла");
     //let outputFile = './src/data/' + 'file.xlsx';
@@ -144,32 +158,117 @@ function createFileXLSX() {
           workbook.sheet("Sheet1").cell(`${header.cell}5`).value(`${header.title}`);
         }
 
-        for (let i = 0; i < goods.length; i++) {
-          const item = goods[i]
-          const colomnNumber = i+6
+        // console.log(discount);
 
-          //console.log(colomnNumber);
-          workbook.sheet("Sheet1").cell(`A${colomnNumber}`).value(`${i+1}`);
-          workbook.sheet("Sheet1").cell(`B${colomnNumber}`).value(`${item.artikulPost}`);
-          workbook.sheet("Sheet1").cell(`C${colomnNumber}`).value(``);
-          workbook.sheet("Sheet1").cell(`D${colomnNumber}`).value(`${item.name}`);
-          workbook.sheet("Sheet1").cell(`E${colomnNumber}`).value(`${item.priceOpt}`);
-          workbook.sheet("Sheet1").cell(`F${colomnNumber}`).value(`${item.priceRozn}`);
-          workbook.sheet("Sheet1").cell(`G${colomnNumber}`).value(`${item.count}`);
+        if (discount === `discountOff`) {
+          let k = 5;
+          for (let i = 0; i < goods.length; i++) {
 
+            const item = goods[i]
+            let colomnNumber = i+6
+
+            // console.log(item.upakovka.indexOf('Скидка'));
+
+            if (item.upakovka.indexOf('%') < 0){
+              // console.log(item.upakovka);
+              // console.log(item.upakovka.indexOf('%'));
+
+              k++;
+              colomnNumber = k;
+
+              // console.log(k);
+              // console.log(colomnNumber);
+
+
+              //console.log(colomnNumber);
+              workbook.sheet("Sheet1").cell(`A${colomnNumber}`).value(`${i+1}`);
+              workbook.sheet("Sheet1").cell(`B${colomnNumber}`).value(`${item.artikulPost}`);
+              workbook.sheet("Sheet1").cell(`C${colomnNumber}`).value(``);
+              workbook.sheet("Sheet1").cell(`D${colomnNumber}`).value(`${item.name}`);
+              workbook.sheet("Sheet1").cell(`E${colomnNumber}`).value(`${item.priceOpt}`);
+              workbook.sheet("Sheet1").cell(`F${colomnNumber}`).value(`${item.priceRozn}`);
+              workbook.sheet("Sheet1").cell(`G${colomnNumber}`).value(`${item.count}`);
+            }
+            //console.log(item.upakovka.indexOf('Скидка'));
+
+          }
+          workbook.toFileAsync(amritaOutputFileDiscountOff)
         }
+
+        if (discount === `discountOn`) {
+          let k = 5;
+          for (let i = 0; i < goods.length; i++) {
+
+            const item = goods[i]
+            let colomnNumber = i+6
+
+            // console.log(item.upakovka.indexOf('Скидка'));
+
+            if (item.upakovka.indexOf('%') >= 0){
+              // console.log(item.upakovka);
+              // console.log(item.upakovka.indexOf('%'));
+
+              k++;
+              colomnNumber = k;
+
+              // console.log(k);
+              // console.log(colomnNumber);
+
+
+              //console.log(colomnNumber);
+              workbook.sheet("Sheet1").cell(`A${colomnNumber}`).value(`${i+1}`);
+              workbook.sheet("Sheet1").cell(`B${colomnNumber}`).value(`${item.artikulPost}`);
+              workbook.sheet("Sheet1").cell(`C${colomnNumber}`).value(``);
+              workbook.sheet("Sheet1").cell(`D${colomnNumber}`).value(`${item.name}`);
+              workbook.sheet("Sheet1").cell(`E${colomnNumber}`).value(`${item.priceOpt}`);
+              workbook.sheet("Sheet1").cell(`F${colomnNumber}`).value(`${item.priceRozn}`);
+              workbook.sheet("Sheet1").cell(`G${colomnNumber}`).value(`${item.count}`);
+            }
+            //console.log(item.upakovka.indexOf('Скидка'));
+
+          }
+          workbook.toFileAsync(amritaOutputFileDiscountOn)
+        }
+
+
+
+
+        // for (let i = 0; i < goods.length; i++) {
+        //
+        //   if (item.upakovka.indexOf('Скидка') >= 0){
+        //
+        //   }
+        //   //console.log(item.upakovka.indexOf('Скидка'));
+        //
+        //   const item = goods[i]
+        //   const colomnNumber = i+6
+        //
+        //   //console.log(colomnNumber);
+        //   workbook.sheet("Sheet1").cell(`A${colomnNumber}`).value(`${i+1}`);
+        //   workbook.sheet("Sheet1").cell(`B${colomnNumber}`).value(`${item.artikulPost}`);
+        //   workbook.sheet("Sheet1").cell(`C${colomnNumber}`).value(``);
+        //   workbook.sheet("Sheet1").cell(`D${colomnNumber}`).value(`${item.name}`);
+        //   workbook.sheet("Sheet1").cell(`E${colomnNumber}`).value(`${item.priceOpt}`);
+        //   workbook.sheet("Sheet1").cell(`F${colomnNumber}`).value(`${item.priceRozn}`);
+        //   workbook.sheet("Sheet1").cell(`G${colomnNumber}`).value(`${item.count}`);
+        //
+        //
+        // }
 
 
         // Write to file.
         // workbook.toFileAsync(outputFile)
-        workbook.toFileAsync(amritaOutputFile)
+
+        // workbook.toFileAsync(amritaOutputFile)
+
+
         // resolve("2-Успех")
       })
       .then(()=>{
         resolve("2-Успех")
       })
       .catch(e=>{
-        reject('2-err')
+        reject(`2-err: ${e}`)
       })
 
 
@@ -191,7 +290,8 @@ function doSomething3() {
 
 
 readFileXLSX()
-  .then(result => createFileXLSX())
+  .then(result => createFileXLSX('discountOff'))
+  .then(result => createFileXLSX('discountOn'))
   .then(newResult => doSomething3())
   .then(finalResult => {
     console.log(`Итоговый результат: ${finalResult}`);
