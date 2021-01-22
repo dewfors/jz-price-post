@@ -13,8 +13,9 @@ console.log(now);
 
 const amritaInputFile = "./src/postPrices/amrita.xlsx";
 const amritaOutputFileDiscountOff = './src/data/' + 'amrita-jz-discountOff.xlsx';
+// const amritaOutputFileDiscountOff = '\\\\srvjz\\d$\\zm\\' + 'amrita-jz-discountOff.xlsx';
 const amritaOutputFileDiscountOn = './src/data/' + 'amrita-jz-discountOn.xlsx';
-const amritaGoodsFile = './src/data/' + 'amrita-goods.txt';
+const amritaGoodsFile = './src/data/' + 'amrita-goods.js';
 const headers = [
   {cell: 'A', id: 'nom', title: 'Номер'},
   {cell: 'B', id: 'artikulPost', title: 'Артикул поставщика'},
@@ -68,7 +69,7 @@ function readFileXLSX() {
             artikulPost = sheet.cell(`A${i}`).value();
             name = sheet.cell(`B${i}`).value();
 
-            priceOpt = sheet.cell(`G${i}`).value();
+            priceOpt = sheet.cell(`M${i}`).value();
             priceRozn = sheet.cell(`Q${i}`).value();
             // count = sheet.cell(`R${i}`).value();
             count = 100;
@@ -141,7 +142,7 @@ function createFileXLSX(discount) {
     XlsxPopulate.fromBlankAsync()
       .then(workbook => {
 
-        namePost = 'Какойто поставщик'
+        namePost = 'Амрита'
 
         // row 2 - cell B - Наименование поставщика
         workbook.sheet("Sheet1").cell(`B2`).value(`Наименование поставщика`);
@@ -167,6 +168,9 @@ function createFileXLSX(discount) {
             const item = goods[i]
             let colomnNumber = i+6
 
+            let priceOpt = Math.floor(Number.parseInt(item.priceOpt));
+            let priceRozn = Math.floor(Number.parseInt(item.priceRozn));
+
             // console.log(item.upakovka.indexOf('Скидка'));
 
             if (item.upakovka.indexOf('%') < 0){
@@ -180,13 +184,16 @@ function createFileXLSX(discount) {
               // console.log(colomnNumber);
 
 
+
               //console.log(colomnNumber);
               workbook.sheet("Sheet1").cell(`A${colomnNumber}`).value(`${i+1}`);
               workbook.sheet("Sheet1").cell(`B${colomnNumber}`).value(`${item.artikulPost}`);
               workbook.sheet("Sheet1").cell(`C${colomnNumber}`).value(``);
               workbook.sheet("Sheet1").cell(`D${colomnNumber}`).value(`${item.name}`);
-              workbook.sheet("Sheet1").cell(`E${colomnNumber}`).value(`${item.priceOpt}`);
-              workbook.sheet("Sheet1").cell(`F${colomnNumber}`).value(`${item.priceRozn}`);
+              // workbook.sheet("Sheet1").cell(`E${colomnNumber}`).value(`${item.priceOpt}`);
+              // workbook.sheet("Sheet1").cell(`F${colomnNumber}`).value(`${item.priceRozn}`);
+              workbook.sheet("Sheet1").cell(`E${colomnNumber}`).value(`${priceOpt}`);
+              workbook.sheet("Sheet1").cell(`F${colomnNumber}`).value(`${priceRozn}`);
               workbook.sheet("Sheet1").cell(`G${colomnNumber}`).value(`${item.count}`);
             }
             //console.log(item.upakovka.indexOf('Скидка'));
@@ -201,6 +208,9 @@ function createFileXLSX(discount) {
 
             const item = goods[i]
             let colomnNumber = i+6
+
+            let priceOpt = Math.floor(Number.parseInt(item.priceOpt));
+            let priceRozn = Math.floor(Number.parseInt(item.priceRozn));
 
             // console.log(item.upakovka.indexOf('Скидка'));
 
@@ -220,8 +230,10 @@ function createFileXLSX(discount) {
               workbook.sheet("Sheet1").cell(`B${colomnNumber}`).value(`${item.artikulPost}`);
               workbook.sheet("Sheet1").cell(`C${colomnNumber}`).value(``);
               workbook.sheet("Sheet1").cell(`D${colomnNumber}`).value(`${item.name}`);
-              workbook.sheet("Sheet1").cell(`E${colomnNumber}`).value(`${item.priceOpt}`);
-              workbook.sheet("Sheet1").cell(`F${colomnNumber}`).value(`${item.priceRozn}`);
+              // workbook.sheet("Sheet1").cell(`E${colomnNumber}`).value(`${item.priceOpt}`);
+              // workbook.sheet("Sheet1").cell(`F${colomnNumber}`).value(`${item.priceRozn}`);
+              workbook.sheet("Sheet1").cell(`E${colomnNumber}`).value(`${priceOpt}`);
+              workbook.sheet("Sheet1").cell(`F${colomnNumber}`).value(`${priceRozn}`);
               workbook.sheet("Sheet1").cell(`G${colomnNumber}`).value(`${item.count}`);
             }
             //console.log(item.upakovka.indexOf('Скидка'));
